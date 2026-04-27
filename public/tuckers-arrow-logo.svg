@@ -1,0 +1,27 @@
+<svg
+  width="324"
+  height="168"
+  viewBox="0 0 324 168"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <rect width="324" height="168" rx="2" fill="#151C24" />
+
+  <g
+    stroke-linecap="square"
+    stroke-linejoin="miter"
+    stroke-width="10"
+    shape-rendering="geometricPrecision"
+  >
+    <path d="M111 37H132L152 53H205" stroke="#7B8392" />
+    <path d="M111 65H131L151 73H196" stroke="#E4C95C" />
+    <path d="M111 89H214" stroke="#7B8392" />
+    <path d="M111 113H131L151 105H196" stroke="#E4C95C" />
+    <path d="M111 141H132L152 125H205" stroke="#7B8392" />
+  </g>
+
+  <path
+    d="M204 28L276 88L204 148L191 134L245 88L191 42L204 28Z"
+    fill="#E4C95C"
+  />
+</svg>

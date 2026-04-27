@@ -1,0 +1,567 @@
+/* ───────────────────────────────────────────────────────
+   Deal Chat — Premium Apple-inspired glass UI
+   ─────────────────────────────────────────────────────── */
+
+/* ─── Panel Shell ─── */
+.deal-chat-panel {
+    box-shadow:
+        0 48px 100px rgba(0, 0, 0, 0.55),
+        0 0 0 0.5px rgba(255, 255, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.02);
+}
+
+.deal-chat-panel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse 60% 40% at 20% 0%, rgba(255, 255, 255, 0.09), transparent),
+        radial-gradient(ellipse 50% 50% at 80% 100%, rgba(246, 223, 95, 0.03), transparent);
+}
+
+/* ─── Ambient Orbs ─── */
+.deal-chat-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    pointer-events: none;
+    animation: orb-drift 18s ease-in-out infinite;
+    will-change: transform;
+}
+
+.deal-chat-orb--top {
+    top: -80px;
+    right: -30px;
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, rgba(246, 223, 95, 0.18), transparent 70%);
+}
+
+.deal-chat-orb--bottom {
+    bottom: -100px;
+    left: -80px;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(120, 130, 160, 0.12), transparent 70%);
+    animation-delay: -7s;
+}
+
+/* ─── FAB Trigger ─── */
+.deal-chat-fab {
+    isolation: isolate;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.deal-chat-fab::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.deal-chat-fab:hover {
+    border-color: rgba(255, 255, 255, 0.16) !important;
+    box-shadow:
+        0 28px 80px rgba(0, 0, 0, 0.45),
+        0 0 0 0.5px rgba(255, 255, 255, 0.06) !important;
+}
+
+.deal-chat-fab-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: linear-gradient(145deg, rgba(246, 223, 95, 0.22), rgba(246, 223, 95, 0.08));
+    border: 1px solid rgba(246, 223, 95, 0.12);
+    box-shadow: 0 8px 20px rgba(246, 223, 95, 0.12);
+}
+
+.deal-chat-fab-dot {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: #f6df5f;
+    box-shadow: 0 0 0 0 rgba(246, 223, 95, 0.4);
+    animation: pulse-ring 2.8s ease-out infinite;
+}
+
+/* ─── Header Elements ─── */
+.deal-chat-header-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.875rem;
+    background: linear-gradient(145deg, rgba(246, 223, 95, 0.18), rgba(246, 223, 95, 0.05));
+    border: 1px solid rgba(246, 223, 95, 0.1);
+    box-shadow:
+        0 10px 24px rgba(246, 223, 95, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+}
+
+.deal-chat-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    flex-shrink: 0;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.deal-chat-close-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.14);
+}
+
+/* ─── Pill / Chip System ─── */
+.deal-chat-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.deal-chat-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.7rem;
+    max-width: 100%;
+    min-width: 0;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.65);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ─── Content Cards ─── */
+.deal-chat-glass-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%),
+        rgba(12, 14, 20, 0.5);
+    box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.14),
+        inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(16px);
+}
+
+.deal-chat-glass-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+    pointer-events: none;
+}
+
+/* ─── Quick Action Buttons ─── */
+.deal-chat-action {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.75rem 0.85rem;
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+.deal-chat-action:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+    transform: translateY(-1px);
+}
+
+.deal-chat-action:active {
+    transform: scale(0.99) translateY(0);
+}
+
+.deal-chat-action:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.deal-chat-action-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 0.7rem;
+    background: linear-gradient(145deg, rgba(246, 223, 95, 0.16), rgba(246, 223, 95, 0.04));
+    border: 1px solid rgba(246, 223, 95, 0.08);
+    flex-shrink: 0;
+}
+
+/* ─── Feature Pills (bottom row) ─── */
+.deal-chat-feature-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.6rem 0.4rem;
+    border-radius: 0.75rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.45);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* ─── Message Avatars ─── */
+.deal-chat-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    flex-shrink: 0;
+    border-radius: 0.625rem;
+}
+
+.deal-chat-avatar--bot {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.deal-chat-avatar--user {
+    background: linear-gradient(145deg, #fce879, #f0d03e);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 6px 16px rgba(246, 223, 95, 0.2);
+}
+
+/* ─── Message Bubbles ─── */
+.deal-chat-bubble-user {
+    background: linear-gradient(180deg, #fce879, #f6df5f 50%, #e8c53f);
+    box-shadow:
+        0 12px 28px rgba(246, 223, 95, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.deal-chat-bubble-ai {
+    position: relative;
+    overflow: hidden;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.03)),
+        rgba(12, 14, 20, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow:
+        0 14px 32px rgba(0, 0, 0, 0.14),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* ─── Thinking Indicator ─── */
+.deal-chat-thinking {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+}
+
+.deal-chat-dots {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.deal-chat-dots span {
+    width: 0.3rem;
+    height: 0.3rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    animation: dot-bounce 1.2s ease-in-out infinite;
+}
+
+.deal-chat-dots span:nth-child(2) { animation-delay: 0.2s; }
+.deal-chat-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+/* ─── Composer ─── */
+.deal-chat-composer {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.65rem;
+    min-height: 3.25rem;
+    padding: 0.6rem 0.65rem 0.6rem 1rem;
+    border-radius: 1.375rem;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.025)),
+        rgba(12, 14, 20, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.14);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.deal-chat-composer:focus-within {
+    border-color: rgba(246, 223, 95, 0.22);
+    box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.16),
+        0 0 0 1px rgba(246, 223, 95, 0.08),
+        0 0 30px rgba(246, 223, 95, 0.04);
+}
+
+.deal-chat-textarea {
+    flex: 1;
+    min-width: 0;
+    min-height: 1.4rem;
+    max-height: 7rem;
+    padding: 0.35rem 0;
+    line-height: 1.5;
+    resize: none;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    outline: none;
+    scrollbar-width: none;
+}
+
+.deal-chat-textarea::-webkit-scrollbar { display: none; }
+
+.deal-chat-textarea::placeholder {
+    color: rgba(255, 255, 255, 0.22);
+}
+
+.deal-chat-textarea:disabled {
+    opacity: 0.4;
+}
+
+/* ─── Send Button ─── */
+.deal-chat-send {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    flex-shrink: 0;
+    border-radius: 0.75rem;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.deal-chat-send--idle {
+    color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.deal-chat-send--active {
+    color: #141820;
+    background: linear-gradient(180deg, #fce879, #f6df5f 50%, #ebc948);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow:
+        0 10px 22px rgba(246, 223, 95, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.deal-chat-send:disabled {
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* ─── Inline Quick Actions (after convo starts) ─── */
+.deal-chat-inline-actions {
+    align-items: stretch;
+}
+
+.deal-chat-inline-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.4rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    white-space: nowrap;
+    color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.deal-chat-inline-pill:hover {
+    color: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.12);
+    transform: translateY(-1px);
+}
+
+/* ─── Utilities ─── */
+.deal-chat-clamp-1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.deal-chat-clamp-2 {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+/* ─── Scrollbar — macOS-style auto-hide ─── */
+.deal-chat-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+}
+
+.deal-chat-scroll:hover {
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.deal-chat-scroll::-webkit-scrollbar {
+    width: 5px;
+}
+
+.deal-chat-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.deal-chat-scroll::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 100px;
+}
+
+.deal-chat-scroll:hover::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.deal-chat-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* ─── Markdown Prose ─── */
+.deal-chat-md p { margin-bottom: 0.5em; }
+.deal-chat-md p:last-child { margin-bottom: 0; }
+.deal-chat-md strong { font-weight: 700; color: rgba(255, 255, 255, 0.94); }
+.deal-chat-md em { font-style: italic; color: rgba(255, 255, 255, 0.68); }
+
+.deal-chat-md ul,
+.deal-chat-md ol { padding-left: 1.15em; margin: 0.4em 0; }
+.deal-chat-md ul { list-style-type: disc; }
+.deal-chat-md ol { list-style-type: decimal; }
+.deal-chat-md li { margin-bottom: 0.18em; }
+.deal-chat-md li::marker { color: rgba(246, 223, 95, 0.5); }
+
+.deal-chat-md h1,
+.deal-chat-md h2,
+.deal-chat-md h3 {
+    margin: 0.5em 0 0.25em;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.92);
+}
+.deal-chat-md h1 { font-size: 1.05em; }
+.deal-chat-md h2 { font-size: 1em; }
+.deal-chat-md h3 { font-size: 0.95em; }
+
+.deal-chat-md code {
+    padding: 0.12em 0.35em;
+    border-radius: 0.4rem;
+    background: rgba(255, 255, 255, 0.07);
+    font-size: 0.88em;
+    font-family: ui-monospace, 'SF Mono', monospace;
+}
+
+.deal-chat-md pre {
+    margin: 0.45em 0;
+    overflow-x: auto;
+    border-radius: 0.75rem;
+    padding: 0.65em 0.8em;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.deal-chat-md pre code { padding: 0; background: none; }
+
+.deal-chat-md blockquote {
+    margin: 0.4em 0;
+    padding-left: 0.75em;
+    border-left: 2px solid rgba(246, 223, 95, 0.3);
+    color: rgba(255, 255, 255, 0.6);
+    font-style: italic;
+}
+
+.deal-chat-md table { width: 100%; margin: 0.4em 0; border-collapse: collapse; font-size: 0.9em; }
+.deal-chat-md th,
+.deal-chat-md td { padding: 0.3em 0.45em; border: 1px solid rgba(255, 255, 255, 0.06); text-align: left; }
+.deal-chat-md th { background: rgba(255, 255, 255, 0.03); font-weight: 700; color: rgba(255, 255, 255, 0.8); }
+.deal-chat-md a { color: #f6df5f; text-decoration: underline; text-underline-offset: 2px; }
+.deal-chat-md hr { margin: 0.5em 0; border: none; border-top: 1px solid rgba(255, 255, 255, 0.06); }
+
+/* ─── Keyframes ─── */
+@keyframes orb-drift {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(0, -10px, 0) scale(1.03); }
+}
+
+@keyframes pulse-ring {
+    0% { box-shadow: 0 0 0 0 rgba(246, 223, 95, 0.4); }
+    70% { box-shadow: 0 0 0 8px rgba(246, 223, 95, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(246, 223, 95, 0); }
+}
+
+@keyframes dot-bounce {
+    0%, 100% { opacity: 0.3; transform: translateY(0); }
+    50% { opacity: 1; transform: translateY(-2px); }
+}
+
+/* ─── Media Queries ─── */
+@media (max-width: 640px) {
+    .deal-chat-fab-dot {
+        top: 0.4rem;
+        right: 0.4rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .deal-chat-orb,
+    .deal-chat-fab-dot,
+    .deal-chat-dots span {
+        animation: none !important;
+    }
+
+    .deal-chat-fab,
+    .deal-chat-action,
+    .deal-chat-inline-pill,
+    .deal-chat-composer {
+        transition: none;
+    }
+}
