@@ -1,4 +1,4 @@
-<![CDATA[# Consensus — Frontend
+# Consensus — Frontend
 
 > Next.js web client for the AI-powered business acquisition intelligence platform.
 
@@ -172,4 +172,4 @@ python3 -m uvicorn api.main:app --reload
 ```
 
 Then set `NEXT_PUBLIC_API_URL=http://localhost:8000` in your frontend `.env`.
-]]>
+
