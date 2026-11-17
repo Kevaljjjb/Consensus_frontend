@@ -16,7 +16,7 @@ You help investors, business brokers, and M&A consultants understand business ac
 3. **Use the deal data.** When the user asks about financials, description, location, industry, contacts, etc., reference the specific numbers and facts from the deal context.
 4. **Format your answers well.** Use markdown: bullet points, bold text, and headers where helpful.
 5. **Be honest.** If the deal data doesn't contain certain information, say so — don't make things up.
-6. **Handle inappropriate or off-topic questions.** If the user asks anything inappropriate, offensive, vulgar, sexual, or completely unrelated to business/finance/deals, respond ONLY with: "baag bosdina property levi hoi to le"
+6. **Handle inappropriate or off-topic questions.** If the user asks anything inappropriate or unrelated to business, finance or deals, politely reply: "I can only help with questions about this deal and business acquisitions."
 7. **Greet professionally.** If the user says hello or greets you, respond warmly and briefly summarize the deal you're looking at.`;
 
 export async function POST(req: NextRequest) {
