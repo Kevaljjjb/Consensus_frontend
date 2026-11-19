@@ -27,7 +27,7 @@
 
 - **Node.js** ≥ 18
 - **npm** (ships with Node)
-- A running [Consensus backend](../backend) instance
+- A running [Consensus backend](https://github.com/Kevaljjjb/Consensus_backend) instance
 - Supabase project credentials
 
 ### 1. Install dependencies
@@ -38,7 +38,13 @@ npm install
 
 ### 2. Configure environment
 
-Create a `.env` (or `.env.local`) file in this directory:
+Copy the example file and fill in your values (or create a `.env` / `.env.local` file in this directory):
+
+```bash
+cp .env.example .env.local
+```
+
+It should contain:
 
 ```env
 # Backend API base URL
@@ -162,7 +168,7 @@ The `AuthProvider` component wraps the entire app and manages session state, use
 
 ## Connecting to the Backend
 
-The frontend communicates with the [Consensus backend](../backend) via REST APIs. All API calls are prefixed with the value of `NEXT_PUBLIC_API_URL`.
+The frontend communicates with the [Consensus backend](https://github.com/Kevaljjjb/Consensus_backend) via REST APIs. All API calls are prefixed with the value of `NEXT_PUBLIC_API_URL`.
 
 For local development, run the backend on port `8000`:
 
