@@ -24,6 +24,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { errorMessage, fetchJson } from '@/lib/api';
 
 interface SimilarListing {
     id: number;
@@ -77,15 +78,14 @@ export default function UploadDealPage() {
         setIsSubmitting(true);
         setResult(null);
         try {
-            const res = await fetch('/api/upload/single', {
+            const data = await fetchJson<UploadResult>('/api/upload/single', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(form),
             });
-            const data: UploadResult = await res.json();
-            setResult(data);
+            setResult({ ...data, similar_listings: data.similar_listings ?? [] });
         } catch (err) {
-            setResult({ inserted: false, duplicate_url: false, similar_listings: [], message: 'Network error. Is the backend running?' });
+            setResult({ inserted: false, duplicate_url: false, similar_listings: [], message: errorMessage(err, 'Upload failed. Please try again.') });
         } finally {
             setIsSubmitting(false);
         }
@@ -98,14 +98,17 @@ export default function UploadDealPage() {
         try {
             const formData = new FormData();
             formData.append('file', csvFile);
-            const res = await fetch('/api/upload/csv', {
+            const data = await fetchJson<CsvResult>('/api/upload/csv', {
                 method: 'POST',
                 body: formData,
             });
-            const data: CsvResult = await res.json();
-            setCsvResult(data);
+            setCsvResult({
+                ...data,
+                errors: data.errors ?? [],
+                potential_duplicates: data.potential_duplicates ?? [],
+            });
         } catch (err) {
-            setCsvResult({ inserted: 0, skipped_duplicates: 0, errors: [{ row: 0, error: 'Network error. Is the backend running?' }], potential_duplicates: [], message: 'Upload failed.' });
+            setCsvResult({ inserted: 0, skipped_duplicates: 0, errors: [{ row: 0, error: errorMessage(err, 'Upload failed. Please try again.') }], potential_duplicates: [], message: 'Upload failed.' });
         } finally {
             setCsvUploading(false);
         }
