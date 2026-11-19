@@ -30,6 +30,43 @@ function extractDetail(body: unknown): string | null {
   return null;
 }
 
+type AccessTokenProvider = () => Promise<string | null>;
+
+let accessTokenProvider: AccessTokenProvider | null = null;
+
+/**
+ * Registered by AuthProvider so API calls can attach the signed-in user's
+ * Supabase access token without every caller knowing about auth.
+ */
+export function setAccessTokenProvider(provider: AccessTokenProvider | null) {
+  accessTokenProvider = provider;
+}
+
+async function getAccessToken(): Promise<string | null> {
+  if (!accessTokenProvider) return null;
+  try {
+    return await accessTokenProvider();
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Drop-in replacement for fetch() for calls to the Consensus backend:
+ * adds `Authorization: Bearer <supabase access token>` when signed in.
+ * Without a session it behaves exactly like fetch().
+ */
+export async function authFetch(input: RequestInfo | URL, init: RequestInit = {}): Promise<Response> {
+  const token = await getAccessToken();
+  if (!token) return fetch(input, init);
+
+  const headers = new Headers(init.headers);
+  if (!headers.has("Authorization")) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+  return fetch(input, { ...init, headers });
+}
+
 /**
  * fetch() + JSON parsing that fails loudly on HTTP errors.
  *
@@ -38,7 +75,7 @@ function extractDetail(body: unknown): string | null {
  * which then crashes on missing fields. This throws an ApiError instead.
  */
 export async function fetchJson<T>(input: RequestInfo | URL, init?: RequestInit): Promise<T> {
-  const res = await fetch(input, init);
+  const res = await authFetch(input, init);
 
   let body: unknown = null;
   const text = await res.text();

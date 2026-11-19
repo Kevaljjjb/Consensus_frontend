@@ -8,6 +8,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { setAccessTokenProvider } from "@/lib/api";
 import { usePathname, useRouter } from "next/navigation";
 import {
   createClient,
@@ -194,6 +195,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       subscription?.unsubscribe();
     };
   }, [router, syncUser]);
+
+  // Let API calls (lib/api.ts) attach the current access token. getSession()
+  // returns a refreshed token when the old one has expired.
+  useEffect(() => {
+    setAccessTokenProvider(async () => {
+      const result = await Promise.race([
+        getSupabaseClient().auth.getSession(),
+        new Promise<null>((resolve) => setTimeout(() => resolve(null), 4000)),
+      ]);
+      return result?.data.session?.access_token ?? null;
+    });
+
+    return () => setAccessTokenProvider(null);
+  }, []);
 
   useEffect(() => {
     if (isLoading || !pathname) return;

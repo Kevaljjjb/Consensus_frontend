@@ -40,6 +40,7 @@ import {
 } from '@/components/ui/table';
 import PageShell from '@/components/PageShell';
 import { useDealCache } from '@/components/DealCacheProvider';
+import { authFetch } from '@/lib/api';
 
 /* ─── Types ─── */
 
@@ -364,7 +365,7 @@ function normalizeOverview(payload: unknown): DashboardOverview {
 
 async function fetchJsonSafe<T>(url: string): Promise<T | null> {
   try {
-    const res = await fetch(url);
+    const res = await authFetch(url);
     if (!res.ok) return null;
     return await res.json() as T;
   } catch { return null; }
@@ -535,7 +536,7 @@ export default function Dashboard() {
   const loadOverview = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/dashboard/overview');
+      const res = await authFetch('/api/dashboard/overview');
       if (!res.ok) throw new Error(`Overview endpoint failed: ${res.status}`);
       const data = normalizeOverview(await res.json());
       setOverview(data); setMode('overview');
