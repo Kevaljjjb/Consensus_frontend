@@ -17,6 +17,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import PageShell from '@/components/PageShell';
 import { useDealCache } from '@/components/DealCacheProvider';
+import { errorMessage, fetchJson } from '@/lib/api';
 
 interface Listing {
     id: number;
@@ -39,6 +40,11 @@ interface ListingsResponse {
     page: number;
     per_page: number;
     total_pages: number;
+    data: Listing[];
+}
+
+interface SearchResponse {
+    total: number;
     data: Listing[];
 }
 
@@ -247,11 +253,16 @@ export default function DealPage() {
     const [filters, setFilters] = useState<DealFilters>(DEFAULT_FILTERS);
     const [appliedFilters, setAppliedFilters] = useState<DealFilters>(DEFAULT_FILTERS);
     const [filterError, setFilterError] = useState('');
+    const [loadError, setLoadError] = useState('');
     const [isHydrated, setIsHydrated] = useState(false);
 
     const cache = useDealCache();
     const initialMount = useRef(true);
     const pendingScrollRestore = useRef<number | null>(null);
+    // Incremented on every browse/search request; a response is only applied
+    // if it belongs to the latest request, so a slow older request can't
+    // overwrite newer results.
+    const requestSeq = useRef(0);
 
     const persistDealFeedState = useCallback((scrollY?: number) => {
         if (typeof window === 'undefined' || !isHydrated) return;
@@ -271,6 +282,8 @@ export default function DealPage() {
 
     const fetchListings = useCallback(async () => {
         const key = makeBrowseCacheKey(page, appliedFilters);
+        const requestId = ++requestSeq.current;
+        setLoadError('');
 
         // Check cache first
         const cached = cache.getCachedListings(key);
@@ -290,9 +303,9 @@ export default function DealPage() {
             });
             appendFilterParams(params, appliedFilters);
 
-            const res = await fetch(`/api/listings?${params}`);
-            const data: ListingsResponse = await res.json();
-            setListings(data.data);
+            const data = await fetchJson<ListingsResponse>(`/api/listings?${params}`);
+            if (requestId !== requestSeq.current) return;
+            setListings(data.data ?? []);
             setTotalPages(data.total_pages);
             setTotal(data.total);
 
@@ -303,9 +316,12 @@ export default function DealPage() {
                 totalPages: data.total_pages,
             });
         } catch (err) {
+            if (requestId !== requestSeq.current) return;
             console.error('Failed to fetch listings:', err);
+            setListings([]);
+            setLoadError(errorMessage(err, 'Failed to load listings.'));
         } finally {
-            setLoading(false);
+            if (requestId === requestSeq.current) setLoading(false);
         }
     }, [page, appliedFilters, cache]);
 
@@ -316,6 +332,8 @@ export default function DealPage() {
         }
 
         const key = makeSearchCacheKey(query, appliedFilters);
+        const requestId = ++requestSeq.current;
+        setLoadError('');
         const cached = cache.getCachedListings(key);
         if (cached) {
             setListings(cached.data);
@@ -332,9 +350,9 @@ export default function DealPage() {
             const params = new URLSearchParams({ q: query, limit: '20' });
             appendFilterParams(params, appliedFilters);
 
-            const res = await fetch(`/api/search?${params}`);
-            const data = await res.json();
-            setListings(data.data);
+            const data = await fetchJson<SearchResponse>(`/api/search?${params}`);
+            if (requestId !== requestSeq.current) return;
+            setListings(data.data ?? []);
             setTotal(data.total);
             setTotalPages(1);
 
@@ -344,9 +362,12 @@ export default function DealPage() {
                 totalPages: 1,
             });
         } catch (err) {
+            if (requestId !== requestSeq.current) return;
             console.error('Search failed:', err);
+            setListings([]);
+            setLoadError(errorMessage(err, 'Search failed.'));
         } finally {
-            setLoading(false);
+            if (requestId === requestSeq.current) setLoading(false);
         }
     }, [appliedFilters, cache]);
 
@@ -803,6 +824,18 @@ export default function DealPage() {
                     {loading ? (
                         <div className="flex items-center justify-center py-32">
                             <Loader2 size={40} className="animate-spin text-[#F6DF5F]" />
+                        </div>
+                    ) : loadError ? (
+                        <div role="alert" className="text-center py-32">
+                            <p className="text-red-500 text-lg font-semibold">Couldn&apos;t load listings.</p>
+                            <p className="text-slate-500 text-sm mt-2">{loadError}</p>
+                            <button
+                                type="button"
+                                onClick={() => (searchMode === 'search' && searchQuery.trim() ? performSearch(searchQuery) : fetchListings())}
+                                className="mt-6 px-6 py-2 rounded-full bg-[#F6DF5F] text-slate-900 font-bold hover:opacity-90 transition-opacity"
+                            >
+                                Try again
+                            </button>
                         </div>
                     ) : listings.length === 0 ? (
                         <div className="text-center py-32">
