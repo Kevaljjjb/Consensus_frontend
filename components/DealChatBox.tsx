@@ -21,6 +21,7 @@ import {
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import './deal-chat.css';
+import { authFetch } from '@/lib/api';
 
 /* ─── Types ─── */
 interface Message {
@@ -174,7 +175,7 @@ export default function DealChatBox({ dealId, deal }: DealChatBoxProps) {
                     content: m.content,
                 }));
 
-                const res = await fetch('/api/deal-chat/stream', {
+                const res = await authFetch('/api/deal-chat/stream', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ deal, messages: allMessages }),

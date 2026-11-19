@@ -36,6 +36,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useDealCache } from '@/components/DealCacheProvider';
+import { authFetch } from '@/lib/api';
 import {
     RadarChart,
     PolarGrid,
@@ -358,7 +359,7 @@ export default function DealDetailsPage({ params }: { params: Promise<{ id: stri
 
         async function fetchDeal() {
             try {
-                const res = await fetch(`/api/listings/${id}`);
+                const res = await authFetch(`/api/listings/${id}`);
                 if (!res.ok) throw new Error('Listing not found');
                 const data = await res.json();
                 setDeal(data);
@@ -379,7 +380,7 @@ export default function DealDetailsPage({ params }: { params: Promise<{ id: stri
                 ? `/api/listings/${id}/evaluation/refresh`
                 : `/api/listings/${id}/evaluation`;
             const options = forceRefresh ? { method: 'POST' as const } : {};
-            const res = await fetch(endpoint, options);
+            const res = await authFetch(endpoint, options);
             if (!res.ok) throw new Error('Evaluation failed');
             const data: DealEvaluation = await res.json();
             setEvaluation(data);

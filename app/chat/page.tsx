@@ -26,6 +26,7 @@ import {
 import PageShell from "@/components/PageShell";
 import { useTheme } from "@/components/ThemeProvider";
 import { useAuth } from "@/components/AuthProvider";
+import { authFetch } from "@/lib/api";
 
 interface Message {
   role: "user" | "assistant";
@@ -461,7 +462,7 @@ export default function ChatPage() {
     setHistoryError("");
 
     try {
-      const res = await fetch(
+      const res = await authFetch(
         `${apiBase}/api/chat/conversations?user_id=${encodeURIComponent(user.id)}`,
         {
           cache: "no-store",
@@ -490,7 +491,7 @@ export default function ChatPage() {
       setEditingMessageIndex(null);
 
       try {
-        const res = await fetch(
+        const res = await authFetch(
           `${apiBase}/api/chat/conversations/${nextConversationId}?user_id=${encodeURIComponent(user.id)}`,
           {
             cache: "no-store",
@@ -525,7 +526,7 @@ export default function ChatPage() {
     setEditingMessageIndex(null);
 
     try {
-      const res = await fetch(`${apiBase}/api/chat/conversations`, {
+      const res = await authFetch(`${apiBase}/api/chat/conversations`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -563,7 +564,7 @@ export default function ChatPage() {
       setHistoryError("");
 
       try {
-        const res = await fetch(
+        const res = await authFetch(
           `${apiBase}/api/chat/conversations/${targetConversationId}?user_id=${encodeURIComponent(user.id)}`,
           {
             method: "DELETE",
@@ -620,7 +621,7 @@ export default function ChatPage() {
       setHistoryError("");
 
       try {
-        const res = await fetch(
+        const res = await authFetch(
           `${apiBase}/api/chat/conversations?user_id=${encodeURIComponent(user.id)}`,
           {
             cache: "no-store",
@@ -638,7 +639,7 @@ export default function ChatPage() {
 
         if (data.length > 0) {
           const newestConversationId = data[0].id;
-          const detailRes = await fetch(
+          const detailRes = await authFetch(
             `${apiBase}/api/chat/conversations/${newestConversationId}?user_id=${encodeURIComponent(user.id)}`,
             {
               cache: "no-store",
@@ -745,7 +746,7 @@ export default function ChatPage() {
       setIsStreaming(false);
 
       try {
-        const res = await fetch(`${apiBase}/api/chat/stream`, {
+        const res = await authFetch(`${apiBase}/api/chat/stream`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
