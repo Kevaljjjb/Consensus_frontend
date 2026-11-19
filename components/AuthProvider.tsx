@@ -14,6 +14,7 @@ import {
   type Session,
   type SupabaseClient,
 } from "@supabase/supabase-js";
+import { getSafeRedirect } from "@/lib/safe-redirect";
 
 type UserRole = string;
 
@@ -221,7 +222,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           ? window.localStorage.getItem(REDIRECT_KEY)
           : null;
 
-      const nextPath = redirectParam || storedRedirect || "/";
+      const nextPath =
+        typeof window !== "undefined"
+          ? getSafeRedirect(
+              redirectParam || storedRedirect,
+              window.location.origin,
+            )
+          : "/";
 
       if (typeof window !== "undefined") {
         window.localStorage.removeItem(REDIRECT_KEY);
@@ -264,9 +271,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       const redirectTo =
         typeof window !== "undefined"
-          ? new URLSearchParams(window.location.search).get("redirect") ||
-            window.localStorage.getItem(REDIRECT_KEY) ||
-            "/"
+          ? getSafeRedirect(
+              new URLSearchParams(window.location.search).get("redirect") ||
+                window.localStorage.getItem(REDIRECT_KEY),
+              window.location.origin,
+            )
           : "/";
 
       if (typeof window !== "undefined") {
