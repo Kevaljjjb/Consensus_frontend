@@ -25,24 +25,13 @@ export function useTheme() {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  // The app always starts in light mode (any stored preference is reset to
+  // "light"), so the initial state is all that's needed. The effect below
+  // applies it to <html> and localStorage on mount and on every toggle.
   const [theme, setTheme] = useState<Theme>("light");
-  const [mounted, setMounted] = useState(false);
-
-  // Read preference on mount
-  useEffect(() => {
-    const stored = localStorage.getItem("consensus-theme") as Theme | null;
-    if (stored === "light") {
-      setTheme("light");
-    } else {
-      localStorage.setItem("consensus-theme", "light");
-      setTheme("light");
-    }
-    setMounted(true);
-  }, []);
 
   // Sync the class on <html> whenever theme changes
   useEffect(() => {
-    if (!mounted) return;
     const root = document.documentElement;
     if (theme === "dark") {
       root.classList.add("dark");
@@ -50,7 +39,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       root.classList.remove("dark");
     }
     localStorage.setItem("consensus-theme", theme);
-  }, [theme, mounted]);
+  }, [theme]);
 
   const toggleTheme = useCallback(() => {
     setTheme((prev) => (prev === "dark" ? "light" : "dark"));
